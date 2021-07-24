@@ -59,8 +59,8 @@ public class PersonController {
   }
 
   @PostMapping("/export")
-  public ResponseEntity<Void> export() {
-    personService.export();
+  public ResponseEntity<Void> export(@RequestBody ExportRequest exportRequest) {
+    personService.export(exportRequest);
     return ResponseEntity.accepted().build();
   }
 

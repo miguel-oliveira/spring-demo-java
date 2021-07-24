@@ -1,5 +1,6 @@
 package miguel.oliveira.demo.mongodb;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -7,12 +8,15 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder;
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import miguel.oliveira.demo.mongodb.ExportRequest.Field;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -54,28 +58,48 @@ public class PersonService {
     return personRepository.findById(id);
   }
 
-  public void export() {
-    export(personRepository.findAll());
+  public void export(ExportRequest exportRequest) {
+    export(exportRequest, personRepository.findAll());
   }
 
   @SneakyThrows
-  private void export(final List<Person> persons) {
-    ObjectToMapTransformer transformer = new ObjectToMapTransformer();
+  private void export(final ExportRequest exportRequest, final List<Person> persons) {
+    final List<Map<String, Object>> flattened = compute(exportRequest, persons);
+    final JsonNode jsonTree = convertToJson(flattened);
+    writeToCsv(jsonTree);
+  }
+
+  private List<Map<String, Object>> compute(
+      final ExportRequest exportRequest,
+      final List<Person> persons) {
+    final ObjectToMapTransformer transformer = new ObjectToMapTransformer();
     transformer.setShouldFlattenKeys(true);
-    List<Map<String, Object>> flattened = new LinkedList<>();
+    final List<Map<String, Object>> flattened = new LinkedList<>();
     for (Person person : persons) {
-      flattened.add(
-          (Map<String, Object>) transformer.transform(new GenericMessage<>(person)).getPayload()
-      );
+      final Map<String, Object> personMap =
+          (Map<String, Object>) transformer.transform(new GenericMessage<>(person)).getPayload();
+      final Map<String, Object> selectedFields = new HashMap<>();
+      for (Field field : exportRequest.getFields()) {
+        selectedFields.put(field.getName(), personMap.getOrDefault(field.getPath(), ""));
+      }
+      flattened.add(selectedFields);
     }
-    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-    String json = ow.writeValueAsString(flattened);
-    JsonNode jsonTree = new ObjectMapper().readTree(json);
-    Builder csvSchemaBuilder = CsvSchema.builder();
-    JsonNode firstObject = jsonTree.elements().next();
-    firstObject.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
-    CsvSchema csvSchema = csvSchemaBuilder.build().withHeader();
-    CsvMapper csvMapper = new CsvMapper();
+    return flattened;
+  }
+
+  private JsonNode convertToJson(final List<Map<String, Object>> flattened)
+      throws JsonProcessingException {
+    final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    final String json = ow.writeValueAsString(flattened);
+    return new ObjectMapper().readTree(json);
+  }
+
+  private void writeToCsv(final JsonNode jsonTree) throws IOException {
+    final JsonNode jsonNode = jsonTree.elements().next();
+    final Builder csvSchemaBuilder = CsvSchema.builder();
+    jsonNode.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
+    final CsvSchema csvSchema = csvSchemaBuilder.build().withHeader();
+    final CsvMapper csvMapper = new CsvMapper();
     csvMapper
         .writerFor(JsonNode.class)
         .with(csvSchema)
