@@ -36,6 +36,20 @@ public class Person {
   public static class Address {
 
     private String street;
+
+    private Building building;
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
+    public static class Building {
+
+      private String name;
+      private int number;
+    }
   }
 
 }

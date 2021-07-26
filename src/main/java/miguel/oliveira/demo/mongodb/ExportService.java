@@ -8,12 +8,12 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import miguel.oliveira.demo.mongodb.ExportRequest.Field;
 import org.springframework.integration.transformer.ObjectToMapTransformer;
@@ -24,11 +24,12 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ExportService {
 
-  public <T> void export(final ExportRequest exportRequest, final List<T> objects)
-      throws IOException {
+  public <T> void export(final ExportRequest exportRequest, final List<T> objects,
+      final String filename, final boolean withHeader) throws JsonProcessingException {
     final List<Map<String, T>> flattened = compute(exportRequest, objects);
     final JsonNode jsonTree = convertToJson(flattened);
-    writeToCsv(jsonTree);
+    final String csvString = convertToCsvString(jsonTree, withHeader);
+    writeToFile(csvString, filename);
   }
 
   private <T> List<Map<String, T>> compute(
@@ -63,16 +64,32 @@ public class ExportService {
     return new ObjectMapper().readTree(json);
   }
 
-  private void writeToCsv(final JsonNode jsonTree) throws IOException {
+  private String convertToCsvString(final JsonNode jsonTree, final boolean withHeader)
+      throws JsonProcessingException {
     final JsonNode jsonNode = jsonTree.elements().next();
     final Builder csvSchemaBuilder = CsvSchema.builder();
     jsonNode.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
-    final CsvSchema csvSchema = csvSchemaBuilder.build().withHeader();
+    final CsvSchema csvSchema =
+        withHeader ? csvSchemaBuilder.build().withHeader() : csvSchemaBuilder.build();
     final CsvMapper csvMapper = new CsvMapper();
-    csvMapper
+    return csvMapper
         .writerFor(JsonNode.class)
         .with(csvSchema)
-        .writeValue(new File(String.format("%s.csv", UUID.randomUUID().toString())), jsonTree);
+        .writeValueAsString(jsonTree);
+  }
+
+  private void writeToFile(final String csvString, final String filename) {
+    final File file = new File(filename);
+    final File parent = file.getParentFile();
+    if (parent != null && !parent.exists() && !parent.mkdirs()) {
+      throw new IllegalStateException("Couldn't create dir: " + parent);
+    }
+    try (FileOutputStream fileOutputStream = new FileOutputStream(file, true)) {
+      fileOutputStream.write(csvString.getBytes());
+    } catch (IOException e) {
+      e.printStackTrace();
+      file.delete();
+    }
   }
 
 }

@@ -1,6 +1,11 @@
 package miguel.oliveira.demo.mongodb;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.IntStream;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
@@ -45,7 +50,21 @@ public class PersonService {
 
   @SneakyThrows
   public void export(ExportRequest exportRequest) {
-    exportService.export(exportRequest, personRepository.findAll());
+    final String filename = String.format("%s/%s.csv", "miguel", UUID.randomUUID());
+    final List<Person> persons = new ArrayList<>(personRepository.findAll());
+    IntStream
+        .range(0, persons.size())
+        .forEach(i -> {
+          final List<Person> ps = new LinkedList<>();
+          ps.add(persons.get(i));
+          export(exportRequest, ps, filename, i == 0);
+        });
+  }
+
+  @SneakyThrows
+  private void export(ExportRequest exportRequest, List<Person> personList, String filename,
+      boolean withHeader) {
+    exportService.export(exportRequest, personList, filename, withHeader);
   }
 
 }
