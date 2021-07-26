@@ -1,9 +1,6 @@
 package miguel.oliveira.demo.mongodb;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder;
@@ -19,6 +16,7 @@ import miguel.oliveira.demo.mongodb.ExportRequest.Field;
 import org.springframework.integration.transformer.ObjectToMapTransformer;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @AllArgsConstructor
@@ -26,10 +24,11 @@ public class ExportService {
 
   public <T> void export(final ExportRequest exportRequest, final List<T> objects,
       final String filename, final boolean withHeader) throws JsonProcessingException {
-    final List<Map<String, T>> flattened = compute(exportRequest, objects);
-    final JsonNode jsonTree = convertToJson(flattened);
-    final String csvString = convertToCsvString(jsonTree, withHeader);
-    writeToFile(csvString, filename);
+    if (!CollectionUtils.isEmpty(objects)) {
+      final List<Map<String, T>> flattened = compute(exportRequest, objects);
+      final byte[] csvBytes = convertToCsvBytes(flattened, withHeader);
+      writeToFile(csvBytes, filename);
+    }
   }
 
   private <T> List<Map<String, T>> compute(
@@ -56,36 +55,27 @@ public class ExportService {
     return flattened;
   }
 
-  private <T> JsonNode convertToJson(final List<Map<String, T>> flattened)
-      throws JsonProcessingException {
-
-    final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-    final String json = ow.writeValueAsString(flattened);
-    return new ObjectMapper().readTree(json);
-  }
-
-  private String convertToCsvString(final JsonNode jsonTree, final boolean withHeader)
-      throws JsonProcessingException {
-    final JsonNode jsonNode = jsonTree.elements().next();
+  private <T> byte[] convertToCsvBytes(final List<Map<String, T>> objects,
+      final boolean withHeader) throws JsonProcessingException {
     final Builder csvSchemaBuilder = CsvSchema.builder();
-    jsonNode.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
+    objects.iterator().next().keySet().forEach(csvSchemaBuilder::addColumn);
     final CsvSchema csvSchema =
         withHeader ? csvSchemaBuilder.build().withHeader() : csvSchemaBuilder.build();
     final CsvMapper csvMapper = new CsvMapper();
     return csvMapper
-        .writerFor(JsonNode.class)
+        .writerFor(List.class)
         .with(csvSchema)
-        .writeValueAsString(jsonTree);
+        .writeValueAsBytes(objects);
   }
 
-  private void writeToFile(final String csvString, final String filename) {
+  private void writeToFile(final byte[] csvBytes, final String filename) {
     final File file = new File(filename);
     final File parent = file.getParentFile();
     if (parent != null && !parent.exists() && !parent.mkdirs()) {
       throw new IllegalStateException("Couldn't create dir: " + parent);
     }
     try (FileOutputStream fileOutputStream = new FileOutputStream(file, true)) {
-      fileOutputStream.write(csvString.getBytes());
+      fileOutputStream.write(csvBytes);
     } catch (IOException e) {
       e.printStackTrace();
       file.delete();
