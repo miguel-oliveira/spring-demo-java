@@ -1,8 +1,14 @@
 package miguel.oliveira.demo.jpa;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.metamodel.SingularAttribute;
 import lombok.AllArgsConstructor;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,6 +20,7 @@ import org.springframework.util.StringUtils;
 public class MyService {
 
   private final MyRepository repository;
+  private final EntityManager entityManager;
 
   public Page<MyEntity> getAll(MyEntityQueryParams queryParams, Pageable pageable) {
     final Specification<MyEntity> specification =
@@ -33,7 +40,44 @@ public class MyService {
         .orElse(Specification.where(null));
   }
 
+  @SuppressWarnings("unchecked")
+  public List<MyEntity> getLatestRevisionUntil(Instant modifiedAt) {
+    return AuditReaderFactory
+        .get(entityManager)
+        .createQuery()
+        .forRevisionsOfEntity(MyEntity.class, true, false)
+        .add(
+            AuditEntity.property("modifiedAt")
+                .maximize()
+                .add(AuditEntity.property("modifiedAt").le(modifiedAt))
+        )
+        .getResultList();
+  }
+
+  @SuppressWarnings("unchecked")
+  public List<MyEntity> getAllRevisions() {
+    return AuditReaderFactory
+        .get(entityManager)
+        .createQuery()
+        .forRevisionsOfEntity(MyEntity.class, true, false)
+        .getResultList();
+  }
+
   public MyEntity create(MyEntity entity) {
+    if (StringUtils.hasText(entity.getId())) {
+      throw new RuntimeException("Should not include id when creating an entity.");
+    }
     return repository.save(entity);
+  }
+
+  public MyEntity update(String id, MyEntity entity) {
+    final Optional<MyEntity> saved = repository.findById(id);
+    if (saved.isPresent()) {
+      entity.setId(id);
+      entity.setVersion(saved.get().getVersion());
+      return repository.save(entity);
+    } else {
+      throw new EntityNotFoundException(id);
+    }
   }
 }
