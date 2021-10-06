@@ -12,4 +12,8 @@ public class Consumer {
   public void consume(Payload payload) {
     LOGGER.info("Got a new message -> {}", payload.toString());
   }
+
+  public void consume(Message message) {
+    LOGGER.info("Got a new message -> {}", message.toString());
+  }
 }
