@@ -53,4 +53,10 @@ public class MyController {
     return new ResponseEntity<>(service.update(id, entity), HttpStatus.OK);
   }
 
+  @PostMapping("/snapshot")
+  public ResponseEntity<Void> snapshot(@RequestParam Instant time) {
+    service.snapshot(time);
+    return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
 }

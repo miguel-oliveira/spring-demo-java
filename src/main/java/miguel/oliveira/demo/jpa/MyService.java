@@ -21,6 +21,7 @@ public class MyService {
 
   private final MyRepository repository;
   private final EntityManager entityManager;
+  private final SnapshotService snapshotService;
 
   public Page<MyEntity> getAll(MyEntityQueryParams queryParams, Pageable pageable) {
     final Specification<MyEntity> specification =
@@ -79,5 +80,9 @@ public class MyService {
     } else {
       throw new EntityNotFoundException(id);
     }
+  }
+
+  public void snapshot(Instant time) {
+    snapshotService.snapshot(time);
   }
 }
