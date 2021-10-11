@@ -48,10 +48,8 @@ public class MyService {
         .createQuery()
         .forRevisionsOfEntity(MyEntity.class, true, false)
         .add(
-            AuditEntity.property("modifiedAt")
-                .maximize()
-                .add(AuditEntity.property("modifiedAt").le(modifiedAt))
-        )
+            AuditEntity.property("modifiedAt").maximize().computeAggregationInInstanceContext()
+                .add(AuditEntity.property("modifiedAt").le(modifiedAt)))
         .getResultList();
   }
 
@@ -83,6 +81,10 @@ public class MyService {
   }
 
   public void snapshot(Instant time) {
-    snapshotService.snapshot(time);
+    try {
+      snapshotService.snapshot(time);
+    } catch (Exception e) {
+      throw new RuntimeException(e.getMessage());
+    }
   }
 }
