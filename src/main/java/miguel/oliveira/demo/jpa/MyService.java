@@ -19,6 +19,8 @@ import org.springframework.util.StringUtils;
 @AllArgsConstructor
 public class MyService {
 
+  public static final String BEAN_NAME = "MyService";
+
   private final MyRepository repository;
   private final EntityManager entityManager;
   private final SnapshotService snapshotService;
@@ -63,9 +65,7 @@ public class MyService {
   }
 
   public MyEntity create(MyEntity entity) {
-    if (StringUtils.hasText(entity.getId())) {
-      throw new RuntimeException("Should not include id when creating an entity.");
-    }
+    entity.setId(null);
     return repository.save(entity);
   }
 

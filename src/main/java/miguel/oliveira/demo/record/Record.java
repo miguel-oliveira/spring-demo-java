@@ -1,4 +1,4 @@
-package miguel.oliveira.demo.aop;
+package miguel.oliveira.demo.record;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface RecordEvent {
-  // Used to mark methods for event registering
+public @interface Record {
+
+  String beanName();
+
 }

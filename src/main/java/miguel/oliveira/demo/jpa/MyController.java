@@ -1,8 +1,11 @@
 package miguel.oliveira.demo.jpa;
 
+import static miguel.oliveira.demo.jpa.MyController.BEAN_NAME;
+
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import miguel.oliveira.demo.record.Record;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@RestController(BEAN_NAME)
 @RequestMapping("/entities")
 @CrossOrigin
 @AllArgsConstructor
 public class MyController {
+
+  static final String BEAN_NAME = "MyController";
 
   private final MyService service;
 
@@ -41,6 +46,7 @@ public class MyController {
   }
 
   @PostMapping
+  @Record(beanName = BEAN_NAME)
   public ResponseEntity<MyEntity> post(@RequestBody MyEntity entity) {
     return new ResponseEntity<>(service.create(entity), HttpStatus.CREATED);
   }

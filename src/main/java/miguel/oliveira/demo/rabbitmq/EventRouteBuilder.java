@@ -23,7 +23,7 @@ public class EventRouteBuilder extends RouteBuilder {
         .setHeader(RabbitMQConstants.ROUTING_KEY, constant("load"))
         .to(ExchangePattern.InOnly, "rabbitmq:topic?declare=false");
 
-    from("rabbitmq:topic?skipExchangeDeclare=true&routingKey=load&exclusive=true")
+    from("rabbitmq:topic?skipExchangeDeclare=true&routingKey=load")
         .unmarshal().json(JsonLibrary.Jackson, Message.class)
         .bean(consumer);
   }
