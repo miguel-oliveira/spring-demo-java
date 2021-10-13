@@ -4,6 +4,7 @@ import static miguel.oliveira.demo.jpa.MyController.BEAN_NAME;
 
 import java.time.Instant;
 import java.util.List;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import miguel.oliveira.demo.record.Record;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,8 @@ public class MyController {
   }
 
   @PutMapping("/{id}")
+  @Record(beanName = BEAN_NAME)
+  @Transactional
   public ResponseEntity<MyEntity> put(
       @PathVariable String id,
       @RequestBody MyEntity entity

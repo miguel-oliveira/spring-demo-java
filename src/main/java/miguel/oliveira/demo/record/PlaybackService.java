@@ -17,16 +17,18 @@ public class PlaybackService {
 
   private final ApplicationContext context;
 
-  public void playback(byte[] eventBytes)
+  public void playback(byte[] recordedBytes)
       throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-    Event event = (Event) SerializationUtils.deserialize(eventBytes);
-    if (event != null) {
-      LOGGER.info("Playback event: {}", event);
-      Object bean = context.getBean(event.getBeanName());
+    RecordedMethodCall recordedMethodCall = (RecordedMethodCall) SerializationUtils.deserialize(
+        recordedBytes);
+    if (recordedMethodCall != null) {
+      LOGGER.debug("Replaying recorded event: {}", recordedMethodCall);
+      Object bean = context.getBean(recordedMethodCall.getBeanName());
       Method method = bean.getClass()
-          .getDeclaredMethod(event.getMethodName(), event.getParameterTypes());
-      // method.invoke(bean, event.getArgs());
+          .getDeclaredMethod(recordedMethodCall.getMethodName(),
+              recordedMethodCall.getParameterTypes());
+      // method.invoke(bean, recordedMethodCall.getArgs());
     } else {
       LOGGER.warn("Null event received, doing nothing...");
     }

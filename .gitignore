@@ -23,6 +23,10 @@
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
+# Extensions
+.idea/jpa-buddy.xml
+.idea/runConfigurations.xml
+
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
