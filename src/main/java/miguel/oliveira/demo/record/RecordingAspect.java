@@ -16,7 +16,7 @@ public class RecordingAspect {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RecordingAspect.class);
 
-  private ApplicationEventPublisher eventPublisher;
+  private final ApplicationEventPublisher eventPublisher;
 
   @AfterReturning("@annotation(miguel.oliveira.demo.record.Record)")
   public void record(JoinPoint joinPoint) {
