@@ -21,14 +21,14 @@ public class SnapshotService {
 
   private static final String QUERY = "COPY (\n"
       + "  SELECT entity.*\n"
-      + "  FROM my_entity_aud entity\n"
+      + "  FROM %1$s entity\n"
       + "  WHERE entity.revtype <> 2\n"
-      + "    AND entity.modified_at <= '%s'\n"
+      + "    AND entity.modified_at <= '%2$s'\n"
       + "    AND entity.modified_at=(SELECT MAX(entity_1.modified_at)\n"
-      + "    FROM my_entity_aud entity_1\n"
-      + "    WHERE entity_1.modified_at <= '%s' and entity_1.id=entity.id)\n"
+      + "      FROM %1$s entity_1\n"
+      + "      WHERE entity_1.modified_at <= '%2$s' AND entity_1.id=entity.id)\n"
       + "  ORDER BY entity.rev ASC"
-      + ") TO '%s' (format csv, delimiter ';');";
+      + ") TO '%3$s' (FORMAT csv, DELIMITER ';');";
 
   private final DataSource dataSource;
 
@@ -37,7 +37,7 @@ public class SnapshotService {
     try {
       connection.setAutoCommit(false);
       final Timestamp timestamp = Timestamp.from(time);
-      final String query = String.format(QUERY, timestamp, timestamp,
+      final String query = String.format(QUERY, "my_entity_aud", timestamp,
           "C:\\Users\\Public\\dump.csv");
       final Resource resource = new ByteArrayResource(query.getBytes());
       ScriptUtils.executeSqlScript(connection, resource);
