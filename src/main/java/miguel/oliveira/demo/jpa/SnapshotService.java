@@ -1,16 +1,20 @@
 package miguel.oliveira.demo.jpa;
 
+import java.io.BufferedWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.DriverManager;
 import java.sql.Timestamp;
 import java.time.Instant;
 import javax.sql.DataSource;
 import lombok.AllArgsConstructor;
+import org.postgresql.copy.CopyManager;
+import org.postgresql.core.BaseConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,25 +32,27 @@ public class SnapshotService {
       + "      FROM %1$s entity_1\n"
       + "      WHERE entity_1.modified_at <= '%2$s' AND entity_1.id=entity.id)\n"
       + "  ORDER BY entity.rev ASC"
-      + ") TO '%3$s' (FORMAT csv, DELIMITER ';');";
+      + ") TO STDOUT (FORMAT csv, DELIMITER ';');";
 
   private final DataSource dataSource;
 
-  public void snapshot(Instant time) throws SQLException {
-    final Connection connection = dataSource.getConnection();
-    try {
-      connection.setAutoCommit(false);
+  public void snapshot(Instant time) {
+    final Path path = Paths.get("dump.csv");
+    try (Connection connection = dataSource.getConnection();
+        BaseConnection baseConnection =
+            (BaseConnection) DriverManager.getConnection(connection.getMetaData().getURL());
+        BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+
       final Timestamp timestamp = Timestamp.from(time);
-      final String query = String.format(QUERY, "my_entity_aud", timestamp,
-          "C:\\Users\\Public\\dump.csv");
-      final Resource resource = new ByteArrayResource(query.getBytes());
-      ScriptUtils.executeSqlScript(connection, resource);
+
+      final String query = String.format(QUERY, "my_entity_aud", timestamp);
+
+      final CopyManager copyManager = new CopyManager(baseConnection);
+
+      copyManager.copyOut(query, bufferedWriter);
+
     } catch (Exception e) {
-      LOGGER.error("Error dumping snapshot", e);
-      connection.rollback();
-    } finally {
-      connection.close();
+      LOGGER.error("Error dumping db contents to file", e);
     }
   }
-
 }
