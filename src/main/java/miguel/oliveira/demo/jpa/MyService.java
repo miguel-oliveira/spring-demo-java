@@ -80,7 +80,7 @@ public class MyService {
     }
   }
 
-  public void snapshot(Instant time) {
+  public void snapshot(Long time) {
     try {
       snapshotService.snapshot(time);
     } catch (Exception e) {

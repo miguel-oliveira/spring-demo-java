@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Timestamp;
-import java.time.Instant;
 import javax.sql.DataSource;
 import lombok.AllArgsConstructor;
 import org.postgresql.copy.CopyManager;
@@ -25,27 +23,31 @@ public class SnapshotService {
 
   private static final String QUERY = "COPY (\n"
       + "  SELECT entity.*\n"
-      + "  FROM %1$s entity\n"
-      + "  WHERE entity.revtype <> 2\n"
-      + "    AND entity.modified_at <= '%2$s'\n"
-      + "    AND entity.modified_at=(SELECT MAX(entity_1.modified_at)\n"
-      + "      FROM %1$s entity_1\n"
-      + "      WHERE entity_1.modified_at <= '%2$s' AND entity_1.id=entity.id)\n"
-      + "  ORDER BY entity.rev ASC"
+      + "  FROM %1$s AS entity\n"
+      + "  INNER JOIN\n"
+      + "  (\n"
+      + "    SELECT latest_rev.id, MAX(latest_rev.rev)\n"
+      + "    FROM\n"
+      + "    (\n"
+      + "      SELECT entity_1.id, entity_1.rev, MAX(ri.revtstmp)\n"
+      + "      FROM %1$s AS entity_1\n"
+      + "      INNER JOIN revinfo AS ri ON entity_1.rev = ri.rev AND entity_1.revtype <> 2 AND ri.revtstmp <= %2$d\n"
+      + "      GROUP BY entity_1.id, entity_1.rev\n"
+      + "    ) latest_rev\n"
+      + "    GROUP BY latest_rev.id\n"
+      + "  ) grouped_latest_revs ON entity.rev = grouped_latest_revs.max AND entity.id = grouped_latest_revs.id\n"
       + ") TO STDOUT (FORMAT csv, DELIMITER ';');";
 
   private final DataSource dataSource;
 
-  public void snapshot(Instant time) {
+  public void snapshot(Long time) {
     final Path path = Paths.get("dump.csv");
     try (Connection connection = dataSource.getConnection();
         BaseConnection baseConnection =
             (BaseConnection) DriverManager.getConnection(connection.getMetaData().getURL());
         BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 
-      final Timestamp timestamp = Timestamp.from(time);
-
-      final String query = String.format(QUERY, "my_entity_aud", timestamp);
+      final String query = String.format(QUERY, "my_entity_aud", time);
 
       final CopyManager copyManager = new CopyManager(baseConnection);
 

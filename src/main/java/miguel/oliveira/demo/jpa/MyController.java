@@ -63,7 +63,7 @@ public class MyController {
   }
 
   @PostMapping("/snapshot")
-  public ResponseEntity<Void> snapshot(@RequestParam Instant time) {
+  public ResponseEntity<Void> snapshot(@RequestParam Long time) {
     service.snapshot(time);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
