@@ -21,21 +21,20 @@ public class SnapshotService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SnapshotService.class);
 
-  private static final String QUERY = "COPY (\n"
-      + "  SELECT entity.*\n"
-      + "  FROM %1$s AS entity\n"
-      + "  INNER JOIN\n"
-      + "  (\n"
-      + "    SELECT latest_rev.id, MAX(latest_rev.rev)\n"
-      + "    FROM\n"
-      + "    (\n"
-      + "      SELECT entity_1.id, entity_1.rev, MAX(ri.revtstmp)\n"
-      + "      FROM %1$s AS entity_1\n"
-      + "      INNER JOIN revinfo AS ri ON entity_1.rev = ri.rev AND entity_1.revtype <> 2 AND ri.revtstmp <= %2$d\n"
-      + "      GROUP BY entity_1.id, entity_1.rev\n"
-      + "    ) latest_rev\n"
-      + "    GROUP BY latest_rev.id\n"
-      + "  ) grouped_latest_revs ON entity.rev = grouped_latest_revs.max AND entity.id = grouped_latest_revs.id\n"
+  private static final String QUERY = "COPY ("
+      + "  SELECT entity.*"
+      + "  FROM %1$s AS entity"
+      + "  INNER JOIN"
+      + "  ("
+      + "    SELECT latest_rev.id, MAX(latest_rev.rev)"
+      + "    FROM"
+      + "    ("
+      + "      SELECT entity_1.id, entity_1.rev"
+      + "      FROM %1$s AS entity_1"
+      + "      INNER JOIN revinfo AS ri ON entity_1.rev = ri.rev AND entity_1.revtype <> 2 AND ri.revtstmp <= %2$d"
+      + "    ) latest_rev"
+      + "    GROUP BY latest_rev.id"
+      + "  ) grouped_latest_revs ON entity.rev = grouped_latest_revs.max AND entity.id = grouped_latest_revs.id"
       + ") TO STDOUT (FORMAT csv, DELIMITER ';');";
 
   private final DataSource dataSource;
