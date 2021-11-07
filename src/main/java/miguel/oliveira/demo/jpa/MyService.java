@@ -80,6 +80,15 @@ public class MyService {
     }
   }
 
+  public void delete(String id) {
+    final Optional<MyEntity> saved = repository.findById(id);
+    if (saved.isPresent()) {
+      repository.deleteById(id);
+    } else {
+      throw new EntityNotFoundException(id);
+    }
+  }
+
   public void snapshot(Long time) {
     try {
       snapshotService.snapshot(time);

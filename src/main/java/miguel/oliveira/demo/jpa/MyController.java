@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,6 +61,12 @@ public class MyController {
       @RequestBody MyEntity entity
   ) {
     return new ResponseEntity<>(service.update(id, entity), HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable String id) {
+    service.delete(id);
+    return ResponseEntity.noContent().build();
   }
 
   @PostMapping("/snapshot")
