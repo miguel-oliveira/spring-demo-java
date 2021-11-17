@@ -1,5 +1,7 @@
 package miguel.oliveira.demo.record;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Method;
 import lombok.AllArgsConstructor;
 import org.apache.camel.ProducerTemplate;
@@ -20,9 +22,10 @@ public class RecordEventPublisher {
   private static final Logger LOGGER = LoggerFactory.getLogger(RecordEventPublisher.class);
 
   private final ProducerTemplate producer;
+  private final ObjectMapper objectMapper;
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
-  public void publish(MethodCallEvent methodCall) {
+  public void publish(MethodCallEvent methodCall) throws JsonProcessingException {
     JoinPoint joinPoint = methodCall.getJoinPoint();
     RecordedMethodCall recordedMethodCall = new RecordedMethodCall();
     Signature signature = joinPoint.getSignature();
@@ -31,7 +34,10 @@ public class RecordEventPublisher {
     recordedMethodCall.setParameterTypes(((MethodSignature) signature).getParameterTypes());
     recordedMethodCall.setArgs(joinPoint.getArgs());
     LOGGER.debug("Publishing recorded event: {}", recordedMethodCall);
-    producer.asyncRequestBody("direct:record", SerializationUtils.serialize(recordedMethodCall));
+    producer
+        .asyncRequestBody(
+            "direct:record",
+            SerializationUtils.serialize(objectMapper.writeValueAsString(recordedMethodCall)));
   }
 
   private String extractBeanName(MethodSignature signature) {

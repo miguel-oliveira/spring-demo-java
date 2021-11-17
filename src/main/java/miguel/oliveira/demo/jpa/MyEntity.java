@@ -1,6 +1,5 @@
 package miguel.oliveira.demo.jpa;
 
-import java.io.Serializable;
 import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +27,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @ToString
 @EntityListeners(AuditingEntityListener.class)
-public class MyEntity implements Serializable {
+public class MyEntity {
 
   @Id
   @GeneratedValue(generator = "UUID")

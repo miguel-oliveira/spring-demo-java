@@ -1,6 +1,5 @@
 package miguel.oliveira.demo.record;
 
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class RecordedMethodCall implements Serializable {
+public class RecordedMethodCall {
 
   private String beanName;
   private String methodName;
