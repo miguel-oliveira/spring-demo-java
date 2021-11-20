@@ -17,6 +17,7 @@
   <properties>
     <java.version>11</java.version>
     <camel.version>3.11.0</camel.version>
+    <apache.commons.text.version>1.9</apache.commons.text.version>
   </properties>
 
 
@@ -139,6 +140,11 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${apache.commons.text.version}</version>
     </dependency>
   </dependencies>
 
