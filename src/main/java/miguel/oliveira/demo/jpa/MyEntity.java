@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -36,6 +37,10 @@ public class MyEntity {
 
   @Version
   private long version;
+
+  @CreatedBy
+  @Column(updatable = false)
+  private String createdBy;
 
   @CreatedDate
   @Column(updatable = false)

@@ -32,6 +32,7 @@ public class MyController {
   static final String BEAN_NAME = "MyController";
 
   private final MyService service;
+  private final MyContextHolder contextHolder;
 
   @GetMapping
   public ResponseEntity<Page<MyEntity>> get(
@@ -50,6 +51,7 @@ public class MyController {
   @PostMapping
   @Record(beanName = BEAN_NAME)
   public ResponseEntity<MyEntity> post(@RequestBody MyEntity entity) {
+    contextHolder.setUsername(entity.getName());
     return new ResponseEntity<>(service.create(entity), HttpStatus.CREATED);
   }
 
