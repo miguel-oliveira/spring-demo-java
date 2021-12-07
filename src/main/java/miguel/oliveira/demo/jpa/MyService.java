@@ -9,9 +9,12 @@ import javax.persistence.metamodel.SingularAttribute;
 import lombok.AllArgsConstructor;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -19,11 +22,14 @@ import org.springframework.util.StringUtils;
 @AllArgsConstructor
 public class MyService {
 
+  public static final Logger LOGGER = LoggerFactory.getLogger(MyService.class);
+
   public static final String BEAN_NAME = "MyService";
 
   private final MyRepository repository;
   private final EntityManager entityManager;
   private final SnapshotService snapshotService;
+  private final MyContextHolder myContextHolder;
 
   public Page<MyEntity> getAll(MyEntityQueryParams queryParams, Pageable pageable) {
     final Specification<MyEntity> specification =
@@ -95,5 +101,10 @@ public class MyService {
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
+  }
+
+  @Async
+  public void asyncContextTest() {
+    LOGGER.info("Async context: {}", myContextHolder.getUsername());
   }
 }

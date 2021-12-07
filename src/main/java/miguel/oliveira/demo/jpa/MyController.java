@@ -52,6 +52,7 @@ public class MyController {
   @Record(beanName = BEAN_NAME)
   public ResponseEntity<MyEntity> post(@RequestBody MyEntity entity) {
     contextHolder.setUsername(entity.getName());
+    service.asyncContextTest();
     return new ResponseEntity<>(service.create(entity), HttpStatus.CREATED);
   }
 
