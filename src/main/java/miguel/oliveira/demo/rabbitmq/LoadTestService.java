@@ -15,8 +15,10 @@ public class LoadTestService {
   private final ProducerTemplate producer;
 
   @Async
-  public void produceRandomMessage() {
-    producer.asyncRequestBody("direct:produce", buildRandomMessage());
+  public void produceRandomMessage(final int requests) {
+    for (int i = 0; i < requests; i++) {
+      producer.asyncRequestBody("direct:produce", buildRandomMessage());
+    }
   }
 
   private Message buildRandomMessage() {

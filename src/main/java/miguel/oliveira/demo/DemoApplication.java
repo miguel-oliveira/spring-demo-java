@@ -8,11 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.SimpleThreadScope;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableCaching
 @EnableAspectJAutoProxy
 @EnableJpaAuditing
+@EnableAsync
 public class DemoApplication {
 
   public static void main(String[] args) {

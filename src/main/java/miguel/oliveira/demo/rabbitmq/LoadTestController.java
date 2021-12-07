@@ -1,6 +1,5 @@
 package miguel.oliveira.demo.rabbitmq;
 
-import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,13 +18,7 @@ public class LoadTestController {
 
   @PostMapping
   public ResponseEntity<Void> load(@RequestParam int requests) {
-    final CompletableFuture<Void> completableFuture = new CompletableFuture<>();
-    completableFuture.completeAsync(() -> {
-      for (int i = 0; i < requests; i++) {
-        loadTestService.produceRandomMessage();
-      }
-      return null;
-    });
+    loadTestService.produceRandomMessage(requests);
     return ResponseEntity.accepted().build();
   }
 }
