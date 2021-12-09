@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import miguel.oliveira.demo.jpa.scope.ThreadScopeContextHolder;
 import miguel.oliveira.demo.record.Record;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,7 +54,9 @@ public class MyController {
   public ResponseEntity<MyEntity> post(@RequestBody MyEntity entity) {
     contextHolder.setUsername(entity.getName());
     service.asyncContextTest();
-    return new ResponseEntity<>(service.create(entity), HttpStatus.CREATED);
+    final MyEntity created = service.create(entity);
+    ThreadScopeContextHolder.currentThreadScopeAttributes().clear();
+    return new ResponseEntity<>(created, HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}")
