@@ -13,11 +13,16 @@ import org.springframework.stereotype.Service;
 public class MyMessageFormatter {
 
   public String format(String message, Object... parameters) {
-    if (message.contains("{}")) {
+    if (hasEmptyPlaceholders(message)) {
       return MessageFormatter.arrayFormat(message, parameters).getMessage();
     } else {
       return indexedMessageFormatter(message, parameters);
     }
+  }
+
+  private boolean hasEmptyPlaceholders(String message) {
+    String emptyPlaceholders = message.replace("\\{}", "");
+    return emptyPlaceholders.contains("{}");
   }
 
   private String indexedMessageFormatter(String message, Object... parameters) {

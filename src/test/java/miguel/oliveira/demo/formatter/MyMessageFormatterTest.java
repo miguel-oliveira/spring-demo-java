@@ -30,9 +30,13 @@ public class MyMessageFormatterTest {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
       return Stream.of(
+          //@formatter:off
           Arguments.of("Hello {0}, {0abc}!", "Hello World, {0abc}!", new String[]{"World"}),
           Arguments.of("Hello {0}, {bc0}!", "Hello World, {bc0}!", new String[]{"World"}),
           Arguments.of("Hello {}!", "Hello World!", new String[]{"World"}),
+          Arguments.of("Hello {0} \\{}!", "Hello World {}!", new String[]{"World"}),
+          Arguments.of("Hello {0} {0} {1} \\{}!", "Hello World World Hello {}!", new String[]{"World", "Hello"}),
+          Arguments.of("Hello {0} {0} \\{1} \\{}!", "Hello World World {1} {}!", new String[]{"World", "Hello"}),
           Arguments.of("Hello { {}!", "Hello { World!", new String[]{"World"}),
           Arguments.of("Hello {}! I'm {}", "Hello World! I'm Bob", new String[]{"World", "Bob"}),
           Arguments.of("Hello {0}! I'm {1}", "Hello World! I'm Bob", new String[]{"World", "Bob"}),
@@ -45,6 +49,7 @@ public class MyMessageFormatterTest {
           Arguments.of("Hello {my stuff} {0}!", "Hello {my stuff} World!", new String[]{"World"}),
           Arguments.of("Hello {my stuff} {0}}}!", "Hello {my stuff} World}}!", new String[]{"World"}),
           Arguments.of("Hello {{my {stuff} \\{a{0}}}.}!", "Hello {{my {stuff} {aWorld}}.}!", new String[]{"World"})
+          //@formatter:on
       );
     }
   }
