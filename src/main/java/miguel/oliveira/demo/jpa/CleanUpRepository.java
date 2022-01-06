@@ -16,13 +16,13 @@ public class CleanUpRepository {
 
   //@formatter:off
   private static final String CLEAN_UP_QUERY =
-      "  DO ' DECLARE"
-    + "    r RECORD;"
-    + "  BEGIN"
-    + "    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP"
-    + "      EXECUTE ''TRUNCATE TABLE '' || quote_ident(r.tablename) || '' CASCADE'';"
-    + "    END LOOP;"
-    + "  END ';";
+      "DO ' DECLARE"
+    + "  r RECORD;"
+    + "BEGIN"
+    + "  FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP"
+    + "    EXECUTE ''TRUNCATE TABLE '' || quote_ident(r.tablename) || '' CASCADE'';"
+    + "  END LOOP;"
+    + "END ';";
   //@formatter:on
 
   private final DataSource dataSource;
