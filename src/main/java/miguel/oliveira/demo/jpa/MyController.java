@@ -34,6 +34,7 @@ public class MyController {
 
   private final MyService service;
   private final MyContextHolder contextHolder;
+  private final CleanUpService cleanUpService;
 
   @GetMapping
   public ResponseEntity<Page<MyEntity>> get(
@@ -79,6 +80,12 @@ public class MyController {
   public ResponseEntity<Void> snapshot(@RequestParam Long time) {
     service.snapshot(time);
     return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  @DeleteMapping
+  public ResponseEntity<Void> deleteAll() {
+    cleanUpService.cleanUp();
+    return ResponseEntity.noContent().build();
   }
 
 }
