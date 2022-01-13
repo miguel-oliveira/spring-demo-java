@@ -13,7 +13,15 @@ spring:
     name: springDatasource
     platform: postgresql
     driver-class-name: org.postgresql.Driver
-
+  jackson:
+    serialization:
+      indent-output: false
+      WRITE_DATES_AS_TIMESTAMPS: true
+      WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS: false
+    deserialization:
+      READ_DATE_TIMESTAMPS_AS_NANOSECONDS: false
+      ACCEPT_SINGLE_VALUE_AS_ARRAY: true
+      ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT: true
 logging:
   level:
     miguel.oliveira.demo: DEBUG

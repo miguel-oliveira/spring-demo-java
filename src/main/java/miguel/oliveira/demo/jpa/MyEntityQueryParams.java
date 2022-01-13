@@ -11,4 +11,14 @@ public class MyEntityQueryParams {
 
   private String name;
 
+  private Long createdAt;
+
+  private Long createdAtFrom;
+
+  private Long createdAtTo;
+
+  private Long modifiedAtFrom;
+
+  private Long modifiedAtTo;
+
 }
