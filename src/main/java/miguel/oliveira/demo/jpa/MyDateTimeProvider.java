@@ -8,7 +8,7 @@ import lombok.NonNull;
 import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.stereotype.Component;
 
-@Component(MyDateTimeProvider.NAME)
+//@Component(MyDateTimeProvider.NAME)
 public class MyDateTimeProvider implements DateTimeProvider {
 
   public static final String NAME = "myDateTimeProvider";

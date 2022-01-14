@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableCaching
 @EnableAspectJAutoProxy
-@EnableJpaAuditing(auditorAwareRef = MyAuditor.NAME, dateTimeProviderRef = MyDateTimeProvider.NAME)
+@EnableJpaAuditing(auditorAwareRef = MyAuditor.NAME)//, dateTimeProviderRef = MyDateTimeProvider.NAME)
 public class DemoApplication {
 
   public static void main(String[] args) {
