@@ -2,7 +2,7 @@ package miguel.oliveira.demo.jpa.scope;
 
 public class ThreadScopeContextHolder {
 
-  private static final ThreadLocal<ThreadScopeAttributes> threadScopeAttributesHolder = new InheritableThreadLocal<>() {
+  private static final ThreadLocal<ThreadScopeAttributes> threadScopeAttributesHolder = new InheritableThreadLocal<ThreadScopeAttributes>() {
     protected ThreadScopeAttributes initialValue() {
       return new ThreadScopeAttributes();
     }

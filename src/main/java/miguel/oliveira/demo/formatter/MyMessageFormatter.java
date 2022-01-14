@@ -42,7 +42,7 @@ public class MyMessageFormatter {
   }
 
   private String indexEmptyPlaceHolders(String original) {
-    StringBuilder sb = new StringBuilder();
+    StringBuffer sb = new StringBuffer();
     Pattern p = Pattern.compile("\\{}");
     Matcher m = p.matcher(original);
 
