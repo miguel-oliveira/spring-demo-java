@@ -8,11 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import javax.sql.DataSource;
 import lombok.AllArgsConstructor;
+import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
-import org.postgresql.core.BaseConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -59,12 +58,12 @@ public class SnapshotService {
   public void snapshot(Long time) {
     final Path path = Paths.get("dump.csv");
     try (Connection connection = dataSource.getConnection();
-        BaseConnection baseConnection =
-            (BaseConnection) DriverManager.getConnection(connection.getMetaData().getURL());
         Writer columnList = new StringWriter();
         BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 
-      final CopyManager copyManager = new CopyManager(baseConnection);
+      final PGConnection pgConnection = connection.unwrap(PGConnection.class);
+
+      final CopyManager copyManager = pgConnection.getCopyAPI();
 
       final String columnListQuery = String.format(COLUMN_LIST_QUERY, "my_entity_aud");
 
