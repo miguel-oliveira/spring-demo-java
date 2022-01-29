@@ -52,7 +52,13 @@ public class MyController {
 
   @PostMapping
   @Record(beanName = BEAN_NAME)
-  public ResponseEntity<MyEntity> post(@RequestBody MyEntity entity) {
+  public ResponseEntity<MyEntity> post(
+      @RequestParam(required = false) Long timestamp,
+      @RequestBody MyEntity entity
+  ) {
+    if (timestamp != null) {
+      contextHolder.setTimestamp(timestamp);
+    }
     contextHolder.setUsername(entity.getName());
     service.asyncContextTest();
     final MyEntity created = service.create(entity);

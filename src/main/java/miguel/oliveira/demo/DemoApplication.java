@@ -1,7 +1,7 @@
 package miguel.oliveira.demo;
 
-import miguel.oliveira.demo.jpa.MyAuditor;
-import miguel.oliveira.demo.jpa.MyDateTimeProvider;
+import miguel.oliveira.demo.jpa.MyJpaAuditor;
+import miguel.oliveira.demo.jpa.MyJpaDateTimeProvider;
 import miguel.oliveira.demo.jpa.scope.ThreadScope;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.SpringApplication;
@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableCaching
 @EnableAspectJAutoProxy
-@EnableJpaAuditing(auditorAwareRef = MyAuditor.NAME)//, dateTimeProviderRef = MyDateTimeProvider.NAME)
+@EnableJpaAuditing(auditorAwareRef = MyJpaAuditor.NAME, dateTimeProviderRef = MyJpaDateTimeProvider.NAME)
 public class DemoApplication {
 
   public static void main(String[] args) {

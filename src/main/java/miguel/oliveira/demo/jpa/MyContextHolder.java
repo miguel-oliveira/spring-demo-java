@@ -13,5 +13,6 @@ import org.springframework.stereotype.Component;
 public class MyContextHolder {
 
   private String username;
+  private Long timestamp;
 
 }

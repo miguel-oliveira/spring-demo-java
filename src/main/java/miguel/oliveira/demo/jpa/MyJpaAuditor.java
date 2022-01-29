@@ -6,9 +6,9 @@ import lombok.NonNull;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
 
-@Component(MyAuditor.NAME)
+@Component(MyJpaAuditor.NAME)
 @AllArgsConstructor
-public class MyAuditor implements AuditorAware<String> {
+public class MyJpaAuditor implements AuditorAware<String> {
 
   public static final String NAME = "myAuditor";
 

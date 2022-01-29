@@ -49,6 +49,10 @@ public class MyEntity {
   @LastModifiedDate
   private Instant modifiedAt;
 
+  @CreatedDate
+  @Column(updatable = false)
+  private Instant actionDate;
+
   @NotBlank
   private String name;
 
