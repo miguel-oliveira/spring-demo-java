@@ -1,5 +1,6 @@
 package miguel.oliveira.demo.jpa;
 
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,7 @@ public class MyEntityQueryParams {
   private Long modifiedAtFrom;
 
   private Long modifiedAtTo;
+
+  private Set<String> nameIn;
 
 }
