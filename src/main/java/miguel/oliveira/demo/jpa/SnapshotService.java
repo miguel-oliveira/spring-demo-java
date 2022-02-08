@@ -53,10 +53,24 @@ public class SnapshotService {
       + ") TO STDOUT (FORMAT CSV, HEADER);";
       //@formatter:on
 
+  private static final String SEQUENCE_QUERY =
+      //@formatter:off
+      "COPY ("
+      + "  SELECT MAX(latest_rev.rev)"
+      + "  FROM"
+      + "  ("
+      + "    SELECT rev"
+      + "    FROM revinfo"
+      + "    WHERE revtstmp <= %1$d"
+      + "  ) latest_rev"
+      + ") TO STDOUT (FORMAT TEXT);";
+  //@formatter:on
+
+
   private final DataSource dataSource;
 
   public void snapshot(Long time) {
-    final Path path = Paths.get("dump.csv");
+    final Path path = Paths.get("snapshot.csv");
     try (Connection connection = dataSource.getConnection();
         Writer columnList = new StringWriter();
         BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
@@ -70,6 +84,26 @@ public class SnapshotService {
       copyManager.copyOut(columnListQuery, columnList);
 
       final String query = String.format(QUERY, columnList, "my_entity_aud", time);
+
+      copyManager.copyOut(query, bufferedWriter);
+
+    } catch (Exception e) {
+      LOGGER.error("Error dumping db contents to file", e);
+    }
+
+    exportSequence(time);
+  }
+
+  private void exportSequence(Long time) {
+    final Path path = Paths.get("id_sequence_value.txt");
+    try (Connection connection = dataSource.getConnection();
+        BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+
+      final PGConnection pgConnection = connection.unwrap(PGConnection.class);
+
+      final CopyManager copyManager = pgConnection.getCopyAPI();
+
+      final String query = String.format(SEQUENCE_QUERY, time);
 
       copyManager.copyOut(query, bufferedWriter);
 

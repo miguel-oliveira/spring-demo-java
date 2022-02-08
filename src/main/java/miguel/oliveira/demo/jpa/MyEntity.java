@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -31,8 +33,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class MyEntity {
 
   @Id
-  @GeneratedValue(generator = "UUID")
-  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  @GenericGenerator(
+      name = "string-sequence-generator",
+      strategy = "miguel.oliveira.demo.jpa.generator.StringSequenceGenerator",
+      parameters = {
+          @Parameter(name = "sequence_name", value = "hibernate_sequence"),
+          @Parameter(name = "sequence_prefix", value = "MY_ID_PREFIX_")
+      })
+  @GeneratedValue(generator = "string-sequence-generator", strategy = GenerationType.SEQUENCE)
   private String id;
 
   @Version
