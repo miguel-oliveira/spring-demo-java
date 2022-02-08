@@ -7,6 +7,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Audited
 @Entity
+@Table(uniqueConstraints = {
+    @UniqueConstraint(name = "compositeKey", columnNames = {"code", "namespace"})})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -42,6 +46,14 @@ public class MyEntity {
       })
   @GeneratedValue(generator = "string-sequence-generator", strategy = GenerationType.SEQUENCE)
   private String id;
+
+  @NotBlank
+  @Column(nullable = false, updatable = false)
+  private String code;
+
+  @NotBlank
+  @Column(nullable = false, updatable = false)
+  private String namespace;
 
   @Version
   private long version;

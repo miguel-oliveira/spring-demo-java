@@ -1,5 +1,6 @@
 package miguel.oliveira.demo.record;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,9 @@ public class RecordedMethodCall {
   private String methodName;
   private Class<?>[] parameterTypes;
   private Object[] args;
+
+  private boolean extractInfo;
+  private Integer index;
+  private List<Info> info;
 
 }

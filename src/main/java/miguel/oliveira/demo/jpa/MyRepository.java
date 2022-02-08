@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface MyRepository
     extends JpaRepository<MyEntity, String>, JpaSpecificationExecutor<MyEntity> {
 
+  MyEntity findByCodeAndNamespace(String code, String namespace);
 }

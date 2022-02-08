@@ -1,4 +1,4 @@
-package miguel.oliveira.demo.jpa;
+package miguel.oliveira.demo.jpa.dto;
 
 import java.util.Set;
 import lombok.AllArgsConstructor;

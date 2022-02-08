@@ -11,4 +11,8 @@ public @interface Record {
 
   String beanName();
 
+  boolean extractInfo() default false;
+
+  int extractInfoFromParamAtIndex() default -1;
+
 }

@@ -6,6 +6,9 @@ import java.time.Instant;
 import java.util.List;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import miguel.oliveira.demo.jpa.dto.MyEntityCreationRequest;
+import miguel.oliveira.demo.jpa.dto.MyEntityQueryParams;
+import miguel.oliveira.demo.jpa.dto.MyEntityUpdateRequest;
 import miguel.oliveira.demo.jpa.scope.ThreadScopeContextHolder;
 import miguel.oliveira.demo.record.Record;
 import org.springframework.data.domain.Page;
@@ -52,31 +55,41 @@ public class MyController {
 
   @PostMapping
   @Record(beanName = BEAN_NAME)
+  @Transactional
   public ResponseEntity<MyEntity> post(
       @RequestParam(required = false) Long timestamp,
-      @RequestBody MyEntity entity
+      @RequestBody MyEntityCreationRequest request
   ) {
     if (timestamp != null) {
       contextHolder.setTimestamp(timestamp);
     }
-    contextHolder.setUsername(entity.getName());
+    contextHolder.setUsername(request.getName());
     service.asyncContextTest();
-    final MyEntity created = service.create(entity);
+    final MyEntity created = service.create(convert(request));
     ThreadScopeContextHolder.currentThreadScopeAttributes().clear();
     return new ResponseEntity<>(created, HttpStatus.CREATED);
   }
 
-  @PutMapping("/{id}")
-  @Record(beanName = BEAN_NAME)
+  private MyEntity convert(MyEntityCreationRequest request) {
+    final MyEntity myEntity = new MyEntity();
+    myEntity.setCode(request.getCode());
+    myEntity.setNamespace(request.getNamespace());
+    myEntity.setName(request.getName());
+    return myEntity;
+  }
+
+  @PutMapping
+  @Record(beanName = BEAN_NAME, extractInfo = true, extractInfoFromParamAtIndex = 0)
   @Transactional
   public ResponseEntity<MyEntity> put(
-      @PathVariable String id,
-      @RequestBody MyEntity entity
+      @RequestBody MyEntityUpdateRequest request
   ) {
-    return new ResponseEntity<>(service.update(id, entity), HttpStatus.OK);
+    return new ResponseEntity<>(service.update(request), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
+  @Transactional
+  @Record(beanName = BEAN_NAME, extractInfo = true, extractInfoFromParamAtIndex = 0)
   public ResponseEntity<Void> delete(@PathVariable String id) {
     service.delete(id);
     return ResponseEntity.noContent().build();
