@@ -18,7 +18,7 @@ public class PlaybackService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PlaybackService.class);
 
-  private final RecordAndPlaybackContextService recordAndPlaybackContextService;
+  private final RecordAndPlaybackContextConverter contextConverter;
   private final ObjectMapper objectMapper;
   private final ApplicationContext context;
 
@@ -37,20 +37,20 @@ public class PlaybackService {
     LOGGER.debug("Replaying recorded event: {}", recordedMethodCall);
     LOGGER.debug("Parsed args: {}", parsedArgs);
 
-    injectContextualInfo(recordedMethodCall, types, parsedArgs);
+    injectContextualInfo(recordedMethodCall, parsedArgs);
 
     Object bean = context.getBean(recordedMethodCall.getBeanName());
     Method method = bean.getClass()
         .getDeclaredMethod(recordedMethodCall.getMethodName(), types);
-    //method.invoke(bean, parsedArgs);
+    method.invoke(bean, parsedArgs);
   }
 
-  private void injectContextualInfo(RecordedMethodCall recordedMethodCall, Class<?>[] types,
-      Object[] parsedArgs) {
+  private void injectContextualInfo(RecordedMethodCall recordedMethodCall, Object[] parsedArgs) {
     if (recordedMethodCall.isExtractInfo()) {
       final int index = recordedMethodCall.getIndex();
       final List<Info> info = recordedMethodCall.getInfo();
-      parsedArgs[index] = recordAndPlaybackContextService.injectInto(info, types[index], parsedArgs[index]);
+      ((RecordAndPlaybackContextExtractable) parsedArgs[index])
+          .injectContext(info, contextConverter);
     }
   }
 

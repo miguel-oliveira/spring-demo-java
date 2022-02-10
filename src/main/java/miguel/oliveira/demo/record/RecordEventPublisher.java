@@ -19,7 +19,7 @@ import org.springframework.util.SerializationUtils;
 @AllArgsConstructor
 public class RecordEventPublisher {
 
-  private final RecordAndPlaybackContextService recordAndPlaybackContextService;
+  private final RecordAndPlaybackContextConverter contextConverter;
   private final ProducerTemplate producer;
   private final ObjectMapper objectMapper;
 
@@ -39,7 +39,6 @@ public class RecordEventPublisher {
     extractContextualInfo(
         recordedMethodCall,
         method,
-        recordedMethodCall.getParameterTypes(),
         recordedMethodCall.getArgs()
     );
 
@@ -62,16 +61,15 @@ public class RecordEventPublisher {
   private void extractContextualInfo(
       RecordedMethodCall recordedMethodCall,
       Method method,
-      Class<?>[] types,
       Object[] args
   ) {
     final Record annotation = method.getAnnotation(Record.class);
 
     if (annotation.extractInfo()) {
       final int index = annotation.extractInfoFromParamAtIndex();
-      final Class<?> type = types[index];
       final Object arg = args[index];
-      final List<Info> info = recordAndPlaybackContextService.extractFrom(type, arg);
+      final List<Info> info =
+          ((RecordAndPlaybackContextExtractable) arg).extractContext(contextConverter);
       recordedMethodCall.setExtractInfo(true);
       recordedMethodCall.setIndex(index);
       recordedMethodCall.setInfo(info);

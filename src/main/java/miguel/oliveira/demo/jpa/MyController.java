@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import miguel.oliveira.demo.jpa.dto.Id;
 import miguel.oliveira.demo.jpa.dto.MyEntityCreationRequest;
 import miguel.oliveira.demo.jpa.dto.MyEntityQueryParams;
 import miguel.oliveira.demo.jpa.dto.MyEntityUpdateRequest;
@@ -90,8 +91,8 @@ public class MyController {
   @DeleteMapping("/{id}")
   @Transactional
   @Record(beanName = BEAN_NAME, extractInfo = true, extractInfoFromParamAtIndex = 0)
-  public ResponseEntity<Void> delete(@PathVariable String id) {
-    service.delete(id);
+  public ResponseEntity<Void> delete(@PathVariable Id id) {
+    service.delete(id.getId());
     return ResponseEntity.noContent().build();
   }
 
