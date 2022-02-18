@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import miguel.oliveira.demo.jpa.dto.MyEntityQueryParams;
+import miguel.oliveira.demo.jpa.dto.MyEntityUpdateRequest;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.slf4j.Logger;
@@ -86,14 +88,14 @@ public class MyService {
     return repository.save(entity);
   }
 
-  public MyEntity update(String id, MyEntity entity) {
-    final Optional<MyEntity> saved = repository.findById(id);
+  public MyEntity update(MyEntityUpdateRequest updateRequest) {
+    final Optional<MyEntity> saved = repository.findById(updateRequest.getId());
     if (saved.isPresent()) {
-      entity.setId(id);
-      entity.setVersion(saved.get().getVersion());
-      return repository.save(entity);
+      final MyEntity persisted = saved.get();
+      persisted.setName(updateRequest.getName());
+      return repository.save(persisted);
     } else {
-      throw new EntityNotFoundException(id);
+      throw new EntityNotFoundException(updateRequest.getId());
     }
   }
 
@@ -118,4 +120,5 @@ public class MyService {
   public void asyncContextTest() {
     LOGGER.info("Async context: {}", myContextHolder.getUsername());
   }
+
 }
