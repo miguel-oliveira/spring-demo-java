@@ -1,4 +1,4 @@
-package miguel.oliveira.demo.rabbitmq;
+package miguel.oliveira.demo.configuration;
 
 import com.rabbitmq.client.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;

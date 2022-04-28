@@ -1,4 +1,4 @@
-package miguel.oliveira.demo.mongodb;
+package miguel.oliveira.demo.configuration;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;

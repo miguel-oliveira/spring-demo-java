@@ -1,4 +1,4 @@
-package miguel.oliveira.demo;
+package miguel.oliveira.demo.configuration;
 
 import java.util.concurrent.Executor;
 import miguel.oliveira.demo.scope.MyTaskDecorator;
