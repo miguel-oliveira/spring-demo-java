@@ -4,14 +4,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
 @NoArgsConstructor
+@Slf4j
 public class ThreadScopeAttributes {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(ThreadScopeAttributes.class);
 
   private Map<String, Object> beanMap = new HashMap<>();
   private Map<String, Runnable> destructionCallbacks = new LinkedHashMap<>();
@@ -42,7 +40,7 @@ public class ThreadScopeAttributes {
     for (String name : destructionCallbacks.keySet()) {
       Runnable callback = destructionCallbacks.get(name);
 
-      LOGGER.debug("Performing destruction callback for '" + name + "' bean" +
+      log.debug("Performing destruction callback for '" + name + "' bean" +
           " on thread '" + Thread.currentThread().getName() + "'.");
 
       callback.run();

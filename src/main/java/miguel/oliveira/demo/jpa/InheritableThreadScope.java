@@ -2,16 +2,14 @@ package miguel.oliveira.demo.jpa;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.core.NamedInheritableThreadLocal;
 import org.springframework.lang.NonNull;
 
+@Slf4j
 public class InheritableThreadScope implements Scope {
-
-  private static final Log logger = LogFactory.getLog(InheritableThreadScope.class);
 
   private final ThreadLocal<Map<String, Object>> threadScope =
       new NamedInheritableThreadLocal<Map<String, Object>>("InheritableThreadScope") {
@@ -44,7 +42,7 @@ public class InheritableThreadScope implements Scope {
 
   @Override
   public void registerDestructionCallback(@NonNull String name, @NonNull Runnable callback) {
-    logger.warn("InheritableThreadScope does not support destruction callbacks. " +
+    log.warn("InheritableThreadScope does not support destruction callbacks. " +
         "Consider using RequestScope in a web environment.");
   }
 

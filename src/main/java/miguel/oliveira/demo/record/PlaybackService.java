@@ -6,17 +6,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.SerializationUtils;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class PlaybackService {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(PlaybackService.class);
 
   private final RecordAndPlaybackContextConverter contextConverter;
   private final ObjectMapper objectMapper;
@@ -34,8 +32,8 @@ public class PlaybackService {
     for (int i = 0; i < parsedArgs.length; i++) {
       parsedArgs[i] = objectMapper.convertValue(args[i], types[i]);
     }
-    LOGGER.debug("Replaying recorded event: {}", recordedMethodCall);
-    LOGGER.debug("Parsed args: {}", parsedArgs);
+    log.debug("Replaying recorded event: {}", recordedMethodCall);
+    log.debug("Parsed args: {}", parsedArgs);
 
     injectContextualInfo(recordedMethodCall, parsedArgs);
 

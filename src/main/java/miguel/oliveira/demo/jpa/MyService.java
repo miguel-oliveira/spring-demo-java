@@ -12,26 +12,18 @@ import miguel.oliveira.demo.jpa.dto.MyEntityQueryParams;
 import miguel.oliveira.demo.jpa.dto.MyEntityUpdateRequest;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class MyService {
 
-  public static final Logger LOGGER = LoggerFactory.getLogger(MyService.class);
-
-  public static final String BEAN_NAME = "MyService";
-
   private final MyRepository repository;
   private final EntityManager entityManager;
   private final SnapshotService snapshotService;
-  private final MyContextHolder myContextHolder;
   private final SpecificationBuilder specificationBuilder;
 
   public Page<MyEntity> getAll(MyEntityQueryParams queryParams, Pageable pageable) {
@@ -114,11 +106,6 @@ public class MyService {
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
-  }
-
-  @Async
-  public void asyncContextTest() {
-    LOGGER.info("Async context: {}", myContextHolder.getUsername());
   }
 
 }

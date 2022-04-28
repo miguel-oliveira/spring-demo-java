@@ -1,10 +1,7 @@
 package miguel.oliveira.demo.formatter;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.stereotype.Service;
@@ -35,23 +32,4 @@ public class MyMessageFormatter {
     return formatter.replace(message);
   }
 
-  private String javaMessageFormat(String message, Object... parameters) {
-    String pattern = message.replace("'", "''");
-    pattern = pattern.replaceAll("(\\{)(\\D+|$)", "'$1'$2");
-    return MessageFormat.format(pattern, parameters);
-  }
-
-  private String indexEmptyPlaceHolders(String original) {
-    StringBuffer sb = new StringBuffer();
-    Pattern p = Pattern.compile("\\{}");
-    Matcher m = p.matcher(original);
-
-    int i = 0;
-    while (m.find()) {
-      m.appendReplacement(sb, String.format("{%d}", i++));
-    }
-    m.appendTail(sb);
-
-    return sb.toString();
-  }
 }

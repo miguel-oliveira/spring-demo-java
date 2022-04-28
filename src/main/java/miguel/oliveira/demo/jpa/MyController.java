@@ -65,7 +65,6 @@ public class MyController {
       contextHolder.setTimestamp(timestamp);
     }
     contextHolder.setUsername(request.getName());
-    service.asyncContextTest();
     final MyEntity created = service.create(convert(request));
     ThreadScopeContextHolder.currentThreadScopeAttributes().clear();
     return new ResponseEntity<>(created, HttpStatus.CREATED);

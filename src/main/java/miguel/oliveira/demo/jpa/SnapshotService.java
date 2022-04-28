@@ -10,17 +10,15 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import javax.sql.DataSource;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class SnapshotService {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(SnapshotService.class);
 
   private static final String COLUMN_LIST_QUERY =
       //@formatter:off
@@ -88,7 +86,7 @@ public class SnapshotService {
       copyManager.copyOut(query, bufferedWriter);
 
     } catch (Exception e) {
-      LOGGER.error("Error dumping db contents to file", e);
+      log.error("Error dumping db contents to file", e);
     }
 
     exportSequence(time);
@@ -108,7 +106,7 @@ public class SnapshotService {
       copyManager.copyOut(query, bufferedWriter);
 
     } catch (Exception e) {
-      LOGGER.error("Error dumping db contents to file", e);
+      log.error("Error dumping db contents to file", e);
     }
   }
 }

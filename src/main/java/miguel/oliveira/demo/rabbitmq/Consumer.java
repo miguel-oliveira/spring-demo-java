@@ -1,19 +1,17 @@
 package miguel.oliveira.demo.rabbitmq;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class Consumer {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(Consumer.class);
-
   public void consume(Payload payload) {
-    LOGGER.info("Got a new message -> {}", payload.toString());
+    log.info("Got a new message -> {}", payload.toString());
   }
 
   public void consume(Message message) {
-    LOGGER.info("Got a new message -> {}", message.toString());
+    log.info("Got a new message -> {}", message.toString());
   }
 }
