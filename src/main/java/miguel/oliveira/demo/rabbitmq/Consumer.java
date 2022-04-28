@@ -7,10 +7,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class Consumer {
 
-  public void consume(Payload payload) {
-    log.info("Got a new message -> {}", payload.toString());
-  }
-
   public void consume(Message message) {
     log.info("Got a new message -> {}", message.toString());
   }
