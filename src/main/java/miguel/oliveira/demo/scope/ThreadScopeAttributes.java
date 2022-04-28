@@ -1,4 +1,4 @@
-package miguel.oliveira.demo.jpa.scope;
+package miguel.oliveira.demo.scope;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

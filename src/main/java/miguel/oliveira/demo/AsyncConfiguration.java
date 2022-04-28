@@ -1,7 +1,7 @@
 package miguel.oliveira.demo;
 
 import java.util.concurrent.Executor;
-import miguel.oliveira.demo.jpa.scope.MyTaskDecorator;
+import miguel.oliveira.demo.scope.MyTaskDecorator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.AsyncConfigurer;

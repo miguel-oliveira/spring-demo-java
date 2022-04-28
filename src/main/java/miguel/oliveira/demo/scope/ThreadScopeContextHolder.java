@@ -1,4 +1,4 @@
-package miguel.oliveira.demo.jpa.scope;
+package miguel.oliveira.demo.scope;
 
 public class ThreadScopeContextHolder {
 

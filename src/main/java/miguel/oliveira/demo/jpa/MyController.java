@@ -10,7 +10,7 @@ import miguel.oliveira.demo.jpa.dto.Id;
 import miguel.oliveira.demo.jpa.dto.MyEntityCreationRequest;
 import miguel.oliveira.demo.jpa.dto.MyEntityQueryParams;
 import miguel.oliveira.demo.jpa.dto.MyEntityUpdateRequest;
-import miguel.oliveira.demo.jpa.scope.ThreadScopeContextHolder;
+import miguel.oliveira.demo.scope.ThreadScopeContextHolder;
 import miguel.oliveira.demo.record.Record;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,4 +1,4 @@
-package miguel.oliveira.demo.jpa.scope;
+package miguel.oliveira.demo.scope;
 
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.lang.NonNull;
