@@ -18,7 +18,7 @@ public class RecordingEventRouteBuilder extends RouteBuilder {
         .setHeader(RabbitMQConstants.ROUTING_KEY, constant("record"))
         .to(ExchangePattern.InOnly, "rabbitmq:record?declare=false");
 
-    from("rabbitmq:record?skipExchangeDeclare=true&routingKey=record")
+    from("rabbitmq:amq.topic?skipExchangeDeclare=true&routingKey=record")
         .bean(playbackService);
   }
 
