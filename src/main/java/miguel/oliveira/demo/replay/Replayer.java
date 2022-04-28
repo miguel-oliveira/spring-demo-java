@@ -1,4 +1,4 @@
-package miguel.oliveira.demo.record;
+package miguel.oliveira.demo.replay;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import miguel.oliveira.demo.record.Info;
+import miguel.oliveira.demo.record.RecordAndReplayContextConverter;
+import miguel.oliveira.demo.record.RecordAndReplayContextExtractable;
+import miguel.oliveira.demo.record.RecordedMethodCall;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.SerializationUtils;
@@ -14,13 +18,13 @@ import org.springframework.util.SerializationUtils;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class PlaybackService {
+public class Replayer {
 
-  private final RecordAndPlaybackContextConverter contextConverter;
+  private final RecordAndReplayContextConverter contextConverter;
   private final ObjectMapper objectMapper;
   private final ApplicationContext context;
 
-  public void playback(byte[] recordedBytes)
+  public void replay(byte[] recordedBytes)
       throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, JsonProcessingException {
 
     String json = (String) SerializationUtils.deserialize(recordedBytes);
@@ -47,7 +51,7 @@ public class PlaybackService {
     if (recordedMethodCall.isExtractInfo()) {
       final int index = recordedMethodCall.getIndex();
       final List<Info> info = recordedMethodCall.getInfo();
-      ((RecordAndPlaybackContextExtractable) parsedArgs[index])
+      ((RecordAndReplayContextExtractable) parsedArgs[index])
           .injectContext(info, contextConverter);
     }
   }

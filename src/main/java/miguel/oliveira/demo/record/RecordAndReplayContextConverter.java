@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class RecordAndPlaybackContextConverter {
+public class RecordAndReplayContextConverter {
 
   private final MyRepository repository;
 

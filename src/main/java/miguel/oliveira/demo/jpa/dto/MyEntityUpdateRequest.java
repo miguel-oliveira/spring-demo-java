@@ -8,15 +8,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import miguel.oliveira.demo.record.Info;
-import miguel.oliveira.demo.record.RecordAndPlaybackContextConverter;
-import miguel.oliveira.demo.record.RecordAndPlaybackContextExtractable;
+import miguel.oliveira.demo.record.RecordAndReplayContextConverter;
+import miguel.oliveira.demo.record.RecordAndReplayContextExtractable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class MyEntityUpdateRequest implements RecordAndPlaybackContextExtractable {
+public class MyEntityUpdateRequest implements RecordAndReplayContextExtractable {
 
   @NotBlank
   private String id;
@@ -25,12 +25,12 @@ public class MyEntityUpdateRequest implements RecordAndPlaybackContextExtractabl
   private String name;
 
   @Override
-  public List<Info> extractContext(RecordAndPlaybackContextConverter service) {
+  public List<Info> extractContext(RecordAndReplayContextConverter service) {
     return service.extractFrom(this);
   }
 
   @Override
-  public void injectContext(List<Info> info, RecordAndPlaybackContextConverter service) {
+  public void injectContext(List<Info> info, RecordAndReplayContextConverter service) {
     this.id = service.recoverFrom(info);
   }
 }

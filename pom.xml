@@ -18,7 +18,7 @@
   <description>Demo project for Spring Boot</description>
 
   <properties>
-    <camel.version>3.12.0</camel.version>
+    <camel.version>3.16.0</camel.version>
     <apache.commons.text.version>1.9</apache.commons.text.version>
   </properties>
 

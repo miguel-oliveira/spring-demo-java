@@ -10,16 +10,11 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class RecordingEventRouteBuilder extends RouteBuilder {
 
-  private final PlaybackService playbackService;
-
   @Override
   public void configure() throws Exception {
     from("direct:record")
         .setHeader(RabbitMQConstants.ROUTING_KEY, constant("record"))
         .to(ExchangePattern.InOnly, "rabbitmq:record?declare=false");
-
-    from("rabbitmq:amq.topic?skipExchangeDeclare=true&routingKey=record")
-        .bean(playbackService);
   }
 
 }

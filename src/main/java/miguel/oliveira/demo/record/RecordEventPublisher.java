@@ -19,7 +19,7 @@ import org.springframework.util.SerializationUtils;
 @AllArgsConstructor
 public class RecordEventPublisher {
 
-  private final RecordAndPlaybackContextConverter contextConverter;
+  private final RecordAndReplayContextConverter contextConverter;
   private final ProducerTemplate producer;
   private final ObjectMapper objectMapper;
 
@@ -69,7 +69,7 @@ public class RecordEventPublisher {
       final int index = annotation.extractInfoFromParamAtIndex();
       final Object arg = args[index];
       final List<Info> info =
-          ((RecordAndPlaybackContextExtractable) arg).extractContext(contextConverter);
+          ((RecordAndReplayContextExtractable) arg).extractContext(contextConverter);
       recordedMethodCall.setExtractInfo(true);
       recordedMethodCall.setIndex(index);
       recordedMethodCall.setInfo(info);
