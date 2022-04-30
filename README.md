@@ -2,9 +2,13 @@
 
 Simple application written in java showcasing some of Spring's capabilities:
 
-* [AMQP](https://github.com/miguel-oliveira/spring-demo-java/tree/main/src/main/java/miguel/oliveira/demo/rabbitmq)
-    - Simple message consumer
+* [RabbitMQ](https://github.com/miguel-oliveira/spring-demo-java/tree/main/src/main/java/miguel/oliveira/demo/rabbitmq)
+    - Simple message [route](https://github.com/miguel-oliveira/spring-demo-java/blob/main/src/main/java/miguel/oliveira/demo/rabbitmq/EventRouteBuilder.java) and [consumer](https://github.com/miguel-oliveira/spring-demo-java/blob/main/src/main/java/miguel/oliveira/demo/rabbitmq/Consumer.java)
       using [Apache Camel Spring RabbitMQ](https://camel.apache.org/components/3.16.x/spring-rabbitmq-component.html).
+    - [Consistent Hash Exchange](https://github.com/rabbitmq/rabbitmq-consistent-hash-exchange/blob/master/README.md) example:
+      - [Producer and Consumer](https://github.com/miguel-oliveira/spring-demo-java/blob/main/src/main/java/miguel/oliveira/demo/rabbitmq/consistenthash/ConsistentHashExchange.java) route declarations
+      - [ConsistentHashConsumer](https://github.com/miguel-oliveira/spring-demo-java/blob/main/src/main/java/miguel/oliveira/demo/rabbitmq/consistenthash/ConsistentHashConsumer.java)
+      - [ConsistentHashProducer](https://github.com/miguel-oliveira/spring-demo-java/blob/main/src/main/java/miguel/oliveira/demo/rabbitmq/consistenthash/ConsistentHashProducer.java)
 
 
 * [Cache](https://github.com/miguel-oliveira/spring-demo-java/tree/main/src/main/java/miguel/oliveira/demo/cache)
