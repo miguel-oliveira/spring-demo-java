@@ -1,22 +1,34 @@
 package miguel.oliveira.demo.rabbitmq.consistenthash;
 
-import static miguel.oliveira.demo.rabbitmq.consistenthash.ConsistentHashExchange.EXCHANGE_NAME;
-import static miguel.oliveira.demo.rabbitmq.consistenthash.ConsistentHashExchange.HASH_HEADER;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Random;
 import miguel.oliveira.demo.rabbitmq.Message;
 import org.apache.camel.ProducerTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public record ConsistentHashProducer(
-    ProducerTemplate producer,
-    ObjectMapper objectMapper
-) {
+public class ConsistentHashProducer {
 
   private final static String[] strings = new String[]{"a", "b", "c", "d", "e"};
+
+  private final ProducerTemplate producer;
+  private final ObjectMapper objectMapper;
+  private final String consistentHashExchangeName;
+  private final String hashHeader;
+
+  public ConsistentHashProducer(
+      ProducerTemplate producer,
+      ObjectMapper objectMapper,
+      @Value("${application.messaging.consistent-hash-exchange.name}") String consistentHashExchangeName,
+      @Value("${application.messaging.consistent-hash-exchange.hash-header}") String hashHeader
+  ) {
+    this.producer = producer;
+    this.objectMapper = objectMapper;
+    this.consistentHashExchangeName = consistentHashExchangeName;
+    this.hashHeader = hashHeader;
+  }
 
   public void produce() throws JsonProcessingException {
     final Random random = new Random();
@@ -25,9 +37,9 @@ public record ConsistentHashProducer(
       final String str = strings[random.nextInt(0, strings.length)];
 
       producer.sendBodyAndHeader(
-          String.format("rabbitmq:%s?declare=false", EXCHANGE_NAME),
+          String.format("rabbitmq:%s?declare=false", consistentHashExchangeName),
           objectMapper.writeValueAsString(new Message(str, i)),
-          HASH_HEADER, str
+          hashHeader, str
       );
     }
   }

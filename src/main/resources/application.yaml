@@ -22,6 +22,16 @@ spring:
       READ_DATE_TIMESTAMPS_AS_NANOSECONDS: false
       ACCEPT_SINGLE_VALUE_AS_ARRAY: true
       ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT: true
+
 logging:
   level:
     miguel.oliveira.demo: DEBUG
+
+application:
+  messaging:
+    consistent-hash-exchange:
+      name: consistent-hash-exchange
+      concurrent-consumers: 10
+      prefetch-count: 2
+      hash-header: hash-on
+      trigger-test-exchange-name: consistent-hash-test-trigger
