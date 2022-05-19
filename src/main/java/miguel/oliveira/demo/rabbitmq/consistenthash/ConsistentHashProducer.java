@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConsistentHashProducer {
 
-  private final static String[] strings = new String[]{"a", "b", "c", "d", "e"};
-
   private final ProducerTemplate producer;
   private final ObjectMapper objectMapper;
   private final String consistentHashExchangeName;
@@ -34,7 +32,7 @@ public class ConsistentHashProducer {
     final Random random = new Random();
     for (int i = 0; i < 100; i++) {
 
-      final String str = strings[random.nextInt(0, strings.length)];
+      final String str = Character.toString((char) (random.nextInt(26) + 'a'));
 
       producer.sendBodyAndHeader(
           String.format("rabbitmq:%s?declare=false", consistentHashExchangeName),

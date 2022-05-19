@@ -32,6 +32,6 @@ application:
     consistent-hash-exchange:
       name: consistent-hash-exchange
       concurrent-consumers: 10
-      prefetch-count: 2
+      prefetch-count: 1
       hash-header: hash-on
       trigger-test-exchange-name: consistent-hash-test-trigger

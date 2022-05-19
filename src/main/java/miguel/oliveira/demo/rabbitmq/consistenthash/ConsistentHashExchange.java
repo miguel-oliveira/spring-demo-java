@@ -1,6 +1,5 @@
 package miguel.oliveira.demo.rabbitmq.consistenthash;
 
-import java.util.Random;
 import miguel.oliveira.demo.rabbitmq.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -42,12 +41,11 @@ public class ConsistentHashExchange extends RouteBuilder {
   }
 
   private void declareConsumers() {
-    final Random random = new Random();
-    for (int i = 0; i < concurrentConsumers; i++) {
+    for (int i = 1; i <= concurrentConsumers; i++) {
       final String route = String.format(
           "rabbitmq:%s?exchangeType=x-consistent-hash&routingKey=%s&prefetchEnabled=true&prefetchCount=%s&arg.exchange.hash-header=%s",
           consistentHashExchangeName,
-          random.nextInt(1, 10000),
+          i,
           prefetchCount,
           hashHeader
       );
